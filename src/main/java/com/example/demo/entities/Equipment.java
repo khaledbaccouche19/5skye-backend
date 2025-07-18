@@ -150,13 +150,7 @@ public class Equipment {
     private PowerSystem powerSystem;
 
     @OneToOne(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
-    private LEDDisplay ledDisplay;
-
-    @OneToOne(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private SecurityCamera securityCamera;
-
-    @OneToOne(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
-    private EnvironmentalSensor environmentalSensor;
 
     @OneToOne(mappedBy = "equipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private NetworkEquipment networkEquipment;

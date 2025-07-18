@@ -66,7 +66,6 @@ public class SensorReadingService {
             existing.setReportGenerated(updated.getReportGenerated());
             existing.setActionTaken(updated.getActionTaken());
             existing.setFollowUpRequired(updated.getFollowUpRequired());
-            existing.setSensor(updated.getSensor());
             return repository.save(existing);
         }).orElse(null);
     }

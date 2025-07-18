@@ -28,9 +28,6 @@ public class NetworkEquipment {
     @Enumerated(EnumType.STRING)
     private EquipmentType equipmentType; // ANTENNA, RADIO_UNIT, BASEBAND, ROUTER, SWITCH
 
-    @Enumerated(EnumType.STRING)
-    private NetworkType networkType; // 5G, 4G, 3G, WIFI, IOT, ETHERNET
-
     @Column(nullable = false)
     private String manufacturer;
 

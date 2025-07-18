@@ -58,8 +58,5 @@ public class SensorReading {
     private String actionTaken;
     private String followUpRequired;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private EnvironmentalSensor sensor;
-
 
 }

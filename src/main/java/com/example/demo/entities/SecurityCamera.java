@@ -38,9 +38,6 @@ public class SecurityCamera {
     @Column(nullable = false)
     private Integer tiltAngle;
 
-    @Enumerated(EnumType.STRING)
-    private CameraStatus status; // ONLINE, OFFLINE, RECORDING, FAULT
-
     @Column(nullable = false)
     private Boolean isRecording;
 
@@ -86,13 +83,6 @@ public class SecurityCamera {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "equipment_id")
     private Equipment equipment;
-
-    @OneToMany(mappedBy = "camera", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SecurityEvent> events = new ArrayList<>();
-
-    @OneToMany(mappedBy = "camera", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CameraMetrics> cameraMetrics = new ArrayList<>();
-
 
 
 }

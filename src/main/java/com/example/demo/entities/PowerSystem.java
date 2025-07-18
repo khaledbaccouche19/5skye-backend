@@ -23,9 +23,6 @@ public class PowerSystem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long powerSystemId;
 
-    @Enumerated(EnumType.STRING)
-    private PowerSystemType systemType; // AC_INPUT, DC_OUTPUT, RECTIFIER, INVERTER
-
     @Column(nullable = false)
     private Double voltage;
 

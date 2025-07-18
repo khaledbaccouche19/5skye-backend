@@ -72,9 +72,6 @@ public class Tower {
     @OneToMany(mappedBy = "tower", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MaintenanceSchedule> maintenanceSchedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tower", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SystemConfiguration> configurations = new ArrayList<>();
-
     @ManyToMany(mappedBy = "accessibleTowers")
     private List<User> authorizedUsers = new ArrayList<>();
 

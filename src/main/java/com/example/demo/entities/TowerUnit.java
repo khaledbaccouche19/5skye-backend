@@ -23,9 +23,6 @@ public class TowerUnit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long unitId;
 
-    @Enumerated(EnumType.STRING)
-    private UnitType unitType; // BASE, AUXILIARY, DISPLAY, VENTILATION, ANTENNA
-
     @Column(nullable = false)
     private Integer height;
 

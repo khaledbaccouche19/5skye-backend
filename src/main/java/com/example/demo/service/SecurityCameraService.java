@@ -40,7 +40,6 @@ public class SecurityCameraService {
             existing.setResolution(updated.getResolution());
             existing.setPanAngle(updated.getPanAngle());
             existing.setTiltAngle(updated.getTiltAngle());
-            existing.setStatus(updated.getStatus());
             existing.setIsRecording(updated.getIsRecording());
             existing.setManufacturer(updated.getManufacturer());
             existing.setModel(updated.getModel());

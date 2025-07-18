@@ -35,7 +35,6 @@ public class TowerUnitService {
 
     public TowerUnit update(Long id, TowerUnit updatedUnit) {
         return towerUnitRepository.findById(id).map(existing -> {
-            existing.setUnitType(updatedUnit.getUnitType());
             existing.setHeight(updatedUnit.getHeight());
             existing.setWeight(updatedUnit.getWeight());
             existing.setDiameter(updatedUnit.getDiameter());

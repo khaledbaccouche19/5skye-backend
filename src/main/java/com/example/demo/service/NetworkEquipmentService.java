@@ -32,7 +32,7 @@ public class NetworkEquipmentService {
     public NetworkEquipment update(Long id, NetworkEquipment updated) {
         return repository.findById(id).map(existing -> {
             existing.setEquipmentType(updated.getEquipmentType());
-            existing.setNetworkType(updated.getNetworkType());
+            // existing.setNetworkType(updated.getNetworkType()); // Removed as per edit hint
             existing.setManufacturer(updated.getManufacturer());
             existing.setModel(updated.getModel());
             existing.setIpAddress(updated.getIpAddress());

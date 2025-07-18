@@ -35,7 +35,6 @@ public class PowerSystemService {
 
     public PowerSystem update(Long id, PowerSystem updated) {
         return repository.findById(id).map(existing -> {
-            existing.setSystemType(updated.getSystemType());
             existing.setVoltage(updated.getVoltage());
             existing.setCurrent(updated.getCurrent());
             existing.setMaxOutput(updated.getMaxOutput());
