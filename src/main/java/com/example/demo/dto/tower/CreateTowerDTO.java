@@ -1,42 +1,59 @@
 package com.example.demo.dto.tower;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import jakarta.validation.constraints.*;
 
-@Getter
-@Setter
+@Data
 public class CreateTowerDTO {
-    @NotBlank
-    private String towerName;
-
-    @NotBlank
-    private String location;
-
-    @NotNull
+    
+    @NotBlank(message = "Tower name is required")
+    @Size(min = 2, max = 100, message = "Tower name must be between 2 and 100 characters")
+    private String name;
+    
+    @NotBlank(message = "Status is required")
+    @Pattern(regexp = "^(ONLINE|OFFLINE|WARNING|CRITICAL|DEACTIVATED)$", 
+             message = "Status must be one of: ONLINE, OFFLINE, WARNING, CRITICAL, DEACTIVATED")
+    private String status;
+    
+    @NotNull(message = "Latitude is required")
+    @DecimalMin(value = "-90.0", message = "Latitude must be between -90 and 90 degrees")
+    @DecimalMax(value = "90.0", message = "Latitude must be between -90 and 90 degrees")
     private Double latitude;
-
-    @NotNull
+    
+    @NotNull(message = "Longitude is required")
+    @DecimalMin(value = "-180.0", message = "Longitude must be between -180 and 180 degrees")
+    @DecimalMax(value = "180.0", message = "Longitude must be between -180 and 180 degrees")
     private Double longitude;
-
-    private String municipality;
-    private String address;
-    private String serialNumber;
-    private String manufacturer;
-    private String model;
-    private Integer totalHeight;
-    private Integer totalWeight;
-    private Boolean isFullyLoaded;
-    private String description;
-    private String contactPerson;
-    private String contactPhone;
-    private String contactEmail;
-    private LocalDateTime installationDate;
-    private LocalDateTime lastMaintenanceDate;
-    private LocalDateTime nextMaintenanceDate;
-    private String warrantyExpiryDate;
-    private String installationCompany;
-    private String operatorCompany;
+    
+    @NotBlank(message = "City is required")
+    @Size(min = 2, max = 100, message = "City name must be between 2 and 100 characters")
+    private String city;
+    
+    @Min(value = 0, message = "Battery percentage must be between 0 and 100")
+    @Max(value = 100, message = "Battery percentage must be between 0 and 100")
+    private Integer battery;
+    
+    @DecimalMin(value = "-273.15", message = "Temperature cannot be below absolute zero")
+    @DecimalMax(value = "100.0", message = "Temperature cannot exceed 100°C")
+    private Double temperature;
+    
+    @Min(value = 0, message = "Uptime percentage must be between 0 and 100")
+    @Max(value = 100, message = "Uptime percentage must be between 0 and 100")
+    private Integer uptime;
+    
+    @Min(value = 0, message = "Network load percentage must be between 0 and 100")
+    @Max(value = 100, message = "Network load percentage must be between 0 and 100")
+    private Integer networkLoad;
+    
+    @Size(max = 200, message = "Use case description cannot exceed 200 characters")
+    private String useCase;
+    
+    @Size(max = 100, message = "Region name cannot exceed 100 characters")
+    private String region;
+    
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Last maintenance date must be in YYYY-MM-DD format")
+    private String lastMaintenance;
+    
+    @Size(max = 500, message = "3D model path cannot exceed 500 characters")
+    private String model3dPath; // Optional 3D model path
 } 

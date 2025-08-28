@@ -1,4 +1,5 @@
 package com.example.demo.entities;
 
-public enum TowerStatus {ACTIVE, INACTIVE, MAINTENANCE, FAULT
+public enum TowerStatus {
+    ONLINE, WARNING, CRITICAL, OFFLINE, DEACTIVATED
 }

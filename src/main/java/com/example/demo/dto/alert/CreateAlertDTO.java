@@ -1,19 +1,21 @@
 package com.example.demo.dto.alert;
 
+import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 public class CreateAlertDTO {
-    @NotNull
+    
+    @NotBlank(message = "Alert message is required")
     private String message;
-    @NotNull
+    
+    @NotBlank(message = "Alert severity is required")
     private String severity;
-    @NotNull
-    private String source;
-    private String status;
-    private String type;
-    private java.time.LocalDateTime timestamp;
+    
+    @NotNull(message = "Tower ID is required")
+    private Long towerId;
+    
+    private String towerName;
+    private Boolean resolved;
 } 

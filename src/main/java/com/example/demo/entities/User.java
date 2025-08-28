@@ -3,8 +3,7 @@ package com.example.demo.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "users")
@@ -17,17 +16,50 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
+
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "role")
     private String role;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_tower_access",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "tower_id")
-    )
-    private List<Tower> accessibleTowers = new ArrayList<>();
+    @Column(name = "is_active")
+    private Boolean isActive;
+
+    @Column(name = "last_login")
+    private OffsetDateTime lastLogin;
+
+    @Column(name = "created_at")
+    private OffsetDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private OffsetDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = OffsetDateTime.now();
+        updatedAt = OffsetDateTime.now();
+        if (isActive == null) {
+            isActive = true;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = OffsetDateTime.now();
+    }
 }

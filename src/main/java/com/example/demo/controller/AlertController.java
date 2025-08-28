@@ -1,58 +1,71 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.alert.AlertDTO;
 import com.example.demo.dto.alert.CreateAlertDTO;
+import com.example.demo.dto.alert.AlertDTO;
+import com.example.demo.dto.alert.AlertSummaryDTO;
 import com.example.demo.service.AlertService;
-import com.example.demo.dto.mapper.AlertMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/alerts")
-@CrossOrigin
+@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class AlertController {
-    private final AlertService alertService;
-    private final AlertMapper alertMapper;
-    public AlertController(AlertService alertService, AlertMapper alertMapper) {
-        this.alertService = alertService;
-        this.alertMapper = alertMapper;
-    }
 
-    @PostMapping
-    public ResponseEntity<AlertDTO> create(@RequestBody @Valid CreateAlertDTO dto) {
-        var entity = alertMapper.toEntity(dto);
-        var saved = alertService.save(entity);
-        AlertDTO created = alertMapper.toDto(saved);
-        return ResponseEntity.status(201).body(created);
-    }
+    private final AlertService alertService;
 
     @GetMapping
-    public List<AlertDTO> getAll() {
-        return alertMapper.toDtoList(alertService.findAll());
+    public ResponseEntity<List<AlertDTO>> getAllAlerts() {
+        List<AlertDTO> alerts = alertService.getAllAlerts();
+        return ResponseEntity.ok(alerts);
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<AlertSummaryDTO>> getRecentAlerts(@RequestParam(defaultValue = "5") int limit) {
+        List<AlertSummaryDTO> alerts = alertService.getRecentAlerts(limit);
+        return ResponseEntity.ok(alerts);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AlertDTO> getAlertById(@PathVariable Long id) {
-        AlertDTO alert = alertMapper.toDto(alertService.findById(id));
-        return alert != null
-                ? ResponseEntity.ok(alert)
-                : ResponseEntity.notFound().build();
+        AlertDTO alert = alertService.getAlertById(id);
+        return ResponseEntity.ok(alert);
+    }
+
+    @GetMapping("/tower/{towerId}")
+    public ResponseEntity<List<AlertDTO>> getAlertsByTowerId(@PathVariable Long towerId) {
+        List<AlertDTO> alerts = alertService.getAlertsByTowerId(towerId);
+        return ResponseEntity.ok(alerts);
+    }
+
+    @PostMapping
+    public ResponseEntity<AlertDTO> createAlert(@RequestBody CreateAlertDTO createAlertDTO) {
+        AlertDTO createdAlert = alertService.createAlert(createAlertDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdAlert);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AlertDTO> updateAlert(@PathVariable Long id, @RequestBody AlertDTO updated) {
-        var entity = alertMapper.toEntity(updated);
-        var updatedEntity = alertService.update(id, entity);
-        AlertDTO alertDto = alertMapper.toDto(updatedEntity);
-        return alertDto != null ? ResponseEntity.ok(alertDto) : ResponseEntity.notFound().build();
+    public ResponseEntity<AlertDTO> updateAlert(
+            @PathVariable Long id,
+            @RequestBody CreateAlertDTO updateAlertDTO) {
+        AlertDTO updatedAlert = alertService.updateAlert(id, updateAlertDTO);
+        return ResponseEntity.ok(updatedAlert);
     }
 
+    @PatchMapping("/{id}/resolve")
+    public ResponseEntity<AlertDTO> resolveAlert(@PathVariable Long id) {
+        AlertDTO resolvedAlert = alertService.resolveAlert(id);
+        return ResponseEntity.ok(resolvedAlert);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAlert(@PathVariable Long id) {
-        alertService.delete(id);
+        alertService.deleteAlert(id);
         return ResponseEntity.noContent().build();
     }
 }

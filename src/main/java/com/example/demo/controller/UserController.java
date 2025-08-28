@@ -1,60 +1,60 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.user.CreateUserDTO;
+import com.example.demo.dto.user.UserDTO;
+import com.example.demo.dto.mapper.UserMapper;
 import com.example.demo.entities.User;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin
+@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class UserController {
-
+    
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
+    private final UserMapper userMapper;
+    
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
-        return ResponseEntity.status(201).body(userService.save(user));
+    public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserDTO dto) {
+        User user = userService.create(dto);
+        UserDTO response = userMapper.toDto(user);
+        return ResponseEntity.status(201).body(response);
     }
-
+    
     @GetMapping
-    public List<User> getAll() {
-        return userService.findAll();
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<User> users = userService.findAll();
+        List<UserDTO> response = userMapper.toDtoList(users);
+        return ResponseEntity.ok(response);
     }
-
+    
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         User user = userService.findById(id);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        UserDTO response = userMapper.toDto(user);
+        return ResponseEntity.ok(response);
     }
-
-    @GetMapping("/by-username/{username}")
-    public ResponseEntity<User> getByUsername(@PathVariable String username) {
-        User user = userService.findByUsername(username);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/by-email/{email}")
-    public ResponseEntity<User> getByEmail(@PathVariable String email) {
-        User user = userService.findByEmail(email);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
-    }
-
+    
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User updatedUser) {
-        User user = userService.update(id, updatedUser);
-        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody CreateUserDTO dto) {
+        User user = userService.update(id, dto);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        UserDTO response = userMapper.toDto(user);
+        return ResponseEntity.ok(response);
     }
-
+    
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }

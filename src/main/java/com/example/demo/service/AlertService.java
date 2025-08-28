@@ -1,47 +1,87 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.alert.CreateAlertDTO;
+import com.example.demo.dto.alert.AlertDTO;
+import com.example.demo.dto.alert.AlertSummaryDTO;
+import com.example.demo.dto.mapper.AlertMapper;
 import com.example.demo.entities.Alert;
 import com.example.demo.repositories.AlertRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AlertService {
 
     private final AlertRepository alertRepository;
+    private final AlertMapper alertMapper;
 
-    @Autowired
-    public AlertService(AlertRepository alertRepository) {
-        this.alertRepository = alertRepository;
+    public List<AlertDTO> getAllAlerts() {
+        return alertRepository.findAll().stream()
+                .map(alertMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Alert save(Alert alert) {
-        return alertRepository.save(alert);
+    public AlertDTO getAlertById(Long id) {
+        Alert alert = alertRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Alert not found with id: " + id));
+        return alertMapper.toDTO(alert);
     }
 
-    public List<Alert> findAll() {
-        return alertRepository.findAll();
+    public List<AlertDTO> getAlertsByTowerId(Long towerId) {
+        return alertRepository.findByTowerId(towerId).stream()
+                .map(alertMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Alert findById(Long id) {
-        return alertRepository.findById(id).orElse(null);
+    public List<AlertSummaryDTO> getRecentAlerts(int limit) {
+        return alertRepository.findTop10ByOrderByTimestampDesc().stream()
+                .limit(limit)
+                .map(alertMapper::toSummaryDTO)
+                .collect(Collectors.toList());
     }
 
-    public Alert update(Long id, Alert updatedAlert) {
-        return alertRepository.findById(id).map(existing -> {
-            existing.setMessage(updatedAlert.getMessage());
-            existing.setSeverity(updatedAlert.getSeverity());
-            existing.setStatus(updatedAlert.getStatus());
-            existing.setSource(updatedAlert.getSource());
-            existing.setType(updatedAlert.getType());
-            existing.setTower(updatedAlert.getTower());
-            return alertRepository.save(existing);
-        }).orElse(null);
+    public AlertDTO createAlert(CreateAlertDTO createAlertDTO) {
+        Alert alert = alertMapper.toEntity(createAlertDTO);
+        alert.setTimestamp(Instant.now());
+        Alert savedAlert = alertRepository.save(alert);
+        return alertMapper.toDTO(savedAlert);
     }
 
-    public void delete(Long id) {
+    public AlertDTO updateAlert(Long id, CreateAlertDTO updateAlertDTO) {
+        Alert existingAlert = alertRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Alert not found with id: " + id));
+        
+        existingAlert.setMessage(updateAlertDTO.getMessage());
+        existingAlert.setSeverity(alertMapper.toEntity(updateAlertDTO).getSeverity());
+        existingAlert.setTowerId(updateAlertDTO.getTowerId());
+        existingAlert.setTowerName(updateAlertDTO.getTowerName());
+        existingAlert.setResolved(updateAlertDTO.getResolved());
+        
+        Alert updatedAlert = alertRepository.save(existingAlert);
+        return alertMapper.toDTO(updatedAlert);
+    }
+
+    public AlertDTO resolveAlert(Long id) {
+        Alert alert = alertRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Alert not found with id: " + id));
+        alert.setResolved(true);
+        Alert resolvedAlert = alertRepository.save(alert);
+        return alertMapper.toDTO(resolvedAlert);
+    }
+
+    public void deleteAlert(Long id) {
+        if (!alertRepository.existsById(id)) {
+            throw new RuntimeException("Alert not found with id: " + id);
+        }
         alertRepository.deleteById(id);
+    }
+
+    public void deleteAlertsByTowerId(Long towerId) {
+        alertRepository.deleteByTowerId(towerId);
     }
 }

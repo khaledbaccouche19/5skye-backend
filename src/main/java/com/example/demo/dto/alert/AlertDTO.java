@@ -1,18 +1,17 @@
 package com.example.demo.dto.alert;
 
-import lombok.Getter;
-import lombok.Setter;
-import java.time.LocalDateTime;
+import lombok.Data;
+import lombok.Builder;
+import java.time.Instant;
 
-@Getter
-@Setter
+@Data
+@Builder
 public class AlertDTO {
     private Long id;
+    private Instant timestamp;
     private String message;
     private String severity;
-    private String source;
-    private String status;
-    private String type;
-    private String tower;
-    private LocalDateTime timestamp;
+    private Long towerId;
+    private String towerName;
+    private Boolean resolved;
 }
