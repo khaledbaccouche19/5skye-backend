@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.tower.CreateTowerDTO;
-import com.example.demo.dto.tower.TowerDTO;
+import com.example.demo.dto.tower.TowerDTO  ;
 import com.example.demo.dto.tower.TowerSummaryDTO;
 import com.example.demo.service.TowerService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/towers")
@@ -150,5 +152,37 @@ public class TowerController {
         report.append("Invalid towers: ").append(invalidCount).append("\n");
         
         return ResponseEntity.ok(report.toString());
+    }
+    
+    /**
+     * Simple pull test endpoint for frontend
+     */
+    @GetMapping("/pull-test")
+    public ResponseEntity<Map<String, Object>> pullTest() {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // Test data retrieval
+            List<TowerDTO> towers = towerService.getAllTowers();
+            List<TowerSummaryDTO> summaries = towerService.getAllTowerSummaries();
+            
+            // Test individual tower retrieval
+            TowerDTO sampleTower = null;
+            if (!towers.isEmpty()) {
+                sampleTower = towerService.getTowerById(towers.get(0).getId());
+            }
+            
+            // Simple success/failure response
+            if (towers != null && summaries != null && sampleTower != null) {
+                response.put("status", "SUCCESSFUL");
+            } else {
+                response.put("status", "NOT SUCCESSFUL");
+            }
+            
+        } catch (Exception e) {
+            response.put("status", "NOT SUCCESSFUL");
+        }
+        
+        return ResponseEntity.ok(response);
     }
 }

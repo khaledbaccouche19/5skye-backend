@@ -56,37 +56,37 @@ public class TowerService {
         
         // Only update fields that are provided
         if (updateTowerDTO.getName() != null) {
-            existingTower.setName(updateTowerDTO.getName());
+        existingTower.setName(updateTowerDTO.getName());
         }
         if (updateTowerDTO.getStatus() != null) {
             existingTower.setStatus(parseTowerStatus(updateTowerDTO.getStatus()));
         }
         if (updateTowerDTO.getLatitude() != null) {
-            existingTower.setLatitude(updateTowerDTO.getLatitude());
+        existingTower.setLatitude(updateTowerDTO.getLatitude());
         }
         if (updateTowerDTO.getLongitude() != null) {
-            existingTower.setLongitude(updateTowerDTO.getLongitude());
+        existingTower.setLongitude(updateTowerDTO.getLongitude());
         }
         if (updateTowerDTO.getCity() != null) {
-            existingTower.setCity(updateTowerDTO.getCity());
+        existingTower.setCity(updateTowerDTO.getCity());
         }
         if (updateTowerDTO.getBattery() != null) {
-            existingTower.setBattery(updateTowerDTO.getBattery());
+        existingTower.setBattery(updateTowerDTO.getBattery());
         }
         if (updateTowerDTO.getTemperature() != null) {
-            existingTower.setTemperature(updateTowerDTO.getTemperature());
+        existingTower.setTemperature(updateTowerDTO.getTemperature());
         }
         if (updateTowerDTO.getUptime() != null) {
-            existingTower.setUptime(updateTowerDTO.getUptime());
+        existingTower.setUptime(updateTowerDTO.getUptime());
         }
         if (updateTowerDTO.getNetworkLoad() != null) {
-            existingTower.setNetworkLoad(updateTowerDTO.getNetworkLoad());
+        existingTower.setNetworkLoad(updateTowerDTO.getNetworkLoad());
         }
         if (updateTowerDTO.getUseCase() != null) {
-            existingTower.setUseCase(updateTowerDTO.getUseCase());
+        existingTower.setUseCase(updateTowerDTO.getUseCase());
         }
         if (updateTowerDTO.getRegion() != null) {
-            existingTower.setRegion(updateTowerDTO.getRegion());
+        existingTower.setRegion(updateTowerDTO.getRegion());
         }
         if (updateTowerDTO.getLastMaintenance() != null) {
             existingTower.setLastMaintenance(java.time.LocalDate.parse(updateTowerDTO.getLastMaintenance()));
