@@ -22,6 +22,8 @@ public class TowerDTO {
     private String region;
     private LocalDate lastMaintenance;
     private String model3dPath; // 3D model path for the tower
+    private String apiEndpointUrl; // External API endpoint for telemetry data
+    private String apiKey; // API key for authentication
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 }

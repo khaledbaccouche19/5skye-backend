@@ -20,19 +20,34 @@ public class TelemetryDataDTO {
 
     // Environmental Conditions
     private Double temperature;
-    private Integer humidity;
+    private Double ambientTemperature;
+    private Double humidity;
     private Double windSpeed;
+    private Integer windDirection;
     private Integer airQuality;
-    private Integer uvIndex;
-    private Integer pressure;
+    private Double uvIndex;
+    private Double pressure;
+    private Double precipitation;
 
     // Network Performance
-    private Integer networkLoad;
-    private Integer signalStrength;
-    private Integer latency;
+    private Double networkLoad;
+    private Double signalStrength;
+    private Double latency;
     private Double packetLoss;
-    private Integer jitter;
-    private Integer bandwidth;
+    private Double jitter;
+    private Double bandwidth;
+    private Double throughput;
+    private Double responseTime;
+    private Double interference;
+
+    // System Performance
+    private Double cpuUtilization;
+    private Double memoryUsage;
+    private Double diskSpace;
+    private Double errorRate;
+
+    // Physical Sensors
+    private Double vibration;
 
     // Legacy fields
     private Double voltage;

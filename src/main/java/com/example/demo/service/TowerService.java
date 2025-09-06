@@ -94,6 +94,12 @@ public class TowerService {
         if (updateTowerDTO.getModel3dPath() != null) {
             existingTower.setModel3dPath(updateTowerDTO.getModel3dPath());
         }
+        if (updateTowerDTO.getApiEndpointUrl() != null) {
+            existingTower.setApiEndpointUrl(updateTowerDTO.getApiEndpointUrl());
+        }
+        if (updateTowerDTO.getApiKey() != null) {
+            existingTower.setApiKey(updateTowerDTO.getApiKey());
+        }
         
         // Validate the final entity before saving
         validateTowerEntity(existingTower);

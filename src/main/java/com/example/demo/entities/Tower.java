@@ -85,6 +85,14 @@ public class Tower {
     @Column(name = "model_3d_path")
     private String model3dPath; // Path to 3D model file (e.g., "/models/tower1.glb")
 
+    @Size(max = 500, message = "API endpoint URL cannot exceed 500 characters")
+    @Column(name = "api_endpoint_url")
+    private String apiEndpointUrl; // External API endpoint for telemetry data
+
+    @Size(max = 200, message = "API key cannot exceed 200 characters")
+    @Column(name = "api_key")
+    private String apiKey; // API key for authentication
+
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 

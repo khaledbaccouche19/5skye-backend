@@ -69,11 +69,17 @@ public class TelemetryDataService {
         if (updateTelemetryDataDTO.getTemperature() != null) {
             existingTelemetryData.setTemperature(updateTelemetryDataDTO.getTemperature());
         }
+        if (updateTelemetryDataDTO.getAmbientTemperature() != null) {
+            existingTelemetryData.setAmbientTemperature(updateTelemetryDataDTO.getAmbientTemperature());
+        }
         if (updateTelemetryDataDTO.getHumidity() != null) {
             existingTelemetryData.setHumidity(updateTelemetryDataDTO.getHumidity());
         }
         if (updateTelemetryDataDTO.getWindSpeed() != null) {
             existingTelemetryData.setWindSpeed(updateTelemetryDataDTO.getWindSpeed());
+        }
+        if (updateTelemetryDataDTO.getWindDirection() != null) {
+            existingTelemetryData.setWindDirection(updateTelemetryDataDTO.getWindDirection());
         }
         if (updateTelemetryDataDTO.getAirQuality() != null) {
             existingTelemetryData.setAirQuality(updateTelemetryDataDTO.getAirQuality());
@@ -83,6 +89,9 @@ public class TelemetryDataService {
         }
         if (updateTelemetryDataDTO.getPressure() != null) {
             existingTelemetryData.setPressure(updateTelemetryDataDTO.getPressure());
+        }
+        if (updateTelemetryDataDTO.getPrecipitation() != null) {
+            existingTelemetryData.setPrecipitation(updateTelemetryDataDTO.getPrecipitation());
         }
         if (updateTelemetryDataDTO.getNetworkLoad() != null) {
             existingTelemetryData.setNetworkLoad(updateTelemetryDataDTO.getNetworkLoad());
@@ -101,6 +110,30 @@ public class TelemetryDataService {
         }
         if (updateTelemetryDataDTO.getBandwidth() != null) {
             existingTelemetryData.setBandwidth(updateTelemetryDataDTO.getBandwidth());
+        }
+        if (updateTelemetryDataDTO.getThroughput() != null) {
+            existingTelemetryData.setThroughput(updateTelemetryDataDTO.getThroughput());
+        }
+        if (updateTelemetryDataDTO.getResponseTime() != null) {
+            existingTelemetryData.setResponseTime(updateTelemetryDataDTO.getResponseTime());
+        }
+        if (updateTelemetryDataDTO.getInterference() != null) {
+            existingTelemetryData.setInterference(updateTelemetryDataDTO.getInterference());
+        }
+        if (updateTelemetryDataDTO.getCpuUtilization() != null) {
+            existingTelemetryData.setCpuUtilization(updateTelemetryDataDTO.getCpuUtilization());
+        }
+        if (updateTelemetryDataDTO.getMemoryUsage() != null) {
+            existingTelemetryData.setMemoryUsage(updateTelemetryDataDTO.getMemoryUsage());
+        }
+        if (updateTelemetryDataDTO.getDiskSpace() != null) {
+            existingTelemetryData.setDiskSpace(updateTelemetryDataDTO.getDiskSpace());
+        }
+        if (updateTelemetryDataDTO.getErrorRate() != null) {
+            existingTelemetryData.setErrorRate(updateTelemetryDataDTO.getErrorRate());
+        }
+        if (updateTelemetryDataDTO.getVibration() != null) {
+            existingTelemetryData.setVibration(updateTelemetryDataDTO.getVibration());
         }
         if (updateTelemetryDataDTO.getVoltage() != null) {
             existingTelemetryData.setVoltage(updateTelemetryDataDTO.getVoltage());

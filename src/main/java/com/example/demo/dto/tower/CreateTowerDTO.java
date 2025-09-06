@@ -56,4 +56,10 @@ public class CreateTowerDTO {
     
     @Size(max = 500, message = "3D model path cannot exceed 500 characters")
     private String model3dPath; // Optional 3D model path
+    
+    @Size(max = 500, message = "API endpoint URL cannot exceed 500 characters")
+    private String apiEndpointUrl; // Optional external API endpoint for telemetry data
+    
+    @Size(max = 200, message = "API key cannot exceed 200 characters")
+    private String apiKey; // Optional API key for authentication
 } 

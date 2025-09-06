@@ -33,6 +33,8 @@ public class TowerMapper {
                 .region(tower.getRegion())
                 .lastMaintenance(tower.getLastMaintenance())
                 .model3dPath(tower.getModel3dPath())
+                .apiEndpointUrl(tower.getApiEndpointUrl())
+                .apiKey(tower.getApiKey())
                 .createdAt(tower.getCreatedAt())
                 .updatedAt(tower.getUpdatedAt())
                 .build();
@@ -57,6 +59,8 @@ public class TowerMapper {
                 .region(createTowerDTO.getRegion())
                 .lastMaintenance(parseLocalDate(createTowerDTO.getLastMaintenance()))
                 .model3dPath(createTowerDTO.getModel3dPath())
+                .apiEndpointUrl(createTowerDTO.getApiEndpointUrl())
+                .apiKey(createTowerDTO.getApiKey())
                 .build();
     }
 
