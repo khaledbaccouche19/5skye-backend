@@ -33,4 +33,8 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> 
     
     @Query("SELECT COUNT(m) FROM Maintenance m WHERE m.tower.id = :towerId AND m.status = :status")
     Long countByTowerIdAndStatus(@Param("towerId") Long towerId, @Param("status") MaintenanceStatus status);
+    
+    List<Maintenance> findByStatusInOrderByStartDateAsc(List<MaintenanceStatus> statuses);
+    
+    void deleteByTowerId(Long towerId);
 }

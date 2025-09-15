@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.maintenance.CreateMaintenanceDTO;
 import com.example.demo.dto.maintenance.MaintenanceDTO;
+import com.example.demo.dto.maintenance.UpdateMaintenanceStatusDTO;
 import com.example.demo.entities.Maintenance;
 import com.example.demo.entities.MaintenanceStatus;
 import com.example.demo.entities.Tower;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -166,5 +168,88 @@ public class MaintenanceService {
                 .towerId(maintenance.getTower().getId())
                 .towerName(maintenance.getTower().getName())
                 .build();
+    }
+    
+    // ========== WORKFLOW METHODS ==========
+    
+    /**
+     * Start maintenance work - change status to IN_PROGRESS
+     */
+    public Maintenance startMaintenance(Long id) {
+        Maintenance maintenance = maintenanceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Maintenance not found with id: " + id));
+        
+        if (maintenance.getStatus() != MaintenanceStatus.PLANNED && 
+            maintenance.getStatus() != MaintenanceStatus.SCHEDULED) {
+            throw new RuntimeException("Cannot start maintenance with status: " + maintenance.getStatus());
+        }
+        
+        maintenance.setStatus(MaintenanceStatus.IN_PROGRESS);
+        return maintenanceRepository.save(maintenance);
+    }
+    
+    /**
+     * Update maintenance status and progress
+     */
+    public Maintenance updateMaintenanceStatus(Long id, UpdateMaintenanceStatusDTO updateDTO) {
+        Maintenance maintenance = maintenanceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Maintenance not found with id: " + id));
+        
+        // Update status
+        if (updateDTO.getStatus() != null) {
+            maintenance.setStatus(updateDTO.getStatus());
+        }
+        
+        // Update end date
+        if (updateDTO.getEndDate() != null) {
+            maintenance.setEndDate(updateDTO.getEndDate());
+        }
+        
+        // Update actual duration
+        if (updateDTO.getActualDurationHours() != null) {
+            maintenance.setActualDurationHours(updateDTO.getActualDurationHours());
+        }
+        
+        // Update actual cost
+        if (updateDTO.getActualCost() != null) {
+            maintenance.setActualCost(updateDTO.getActualCost());
+        }
+        
+        // Update notes
+        if (updateDTO.getCompletionNotes() != null) {
+            String existingNotes = maintenance.getNotes() != null ? maintenance.getNotes() : "";
+            maintenance.setNotes(existingNotes + "\n\nCompletion Notes: " + updateDTO.getCompletionNotes());
+        }
+        
+        if (updateDTO.getTechnicianNotes() != null) {
+            String existingNotes = maintenance.getNotes() != null ? maintenance.getNotes() : "";
+            maintenance.setNotes(existingNotes + "\n\nTechnician Notes: " + updateDTO.getTechnicianNotes());
+        }
+        
+        if (updateDTO.getQualityCheckNotes() != null) {
+            String existingNotes = maintenance.getNotes() != null ? maintenance.getNotes() : "";
+            maintenance.setNotes(existingNotes + "\n\nQuality Check: " + updateDTO.getQualityCheckNotes());
+        }
+        
+        // Update next maintenance recommendation
+        if (updateDTO.getNextMaintenanceRecommendation() != null) {
+            String existingNotes = maintenance.getNotes() != null ? maintenance.getNotes() : "";
+            maintenance.setNotes(existingNotes + "\n\nNext Maintenance: " + updateDTO.getNextMaintenanceRecommendation());
+        }
+        
+        return maintenanceRepository.save(maintenance);
+    }
+    
+    /**
+     * Get active maintenance (IN_PROGRESS, ON_HOLD)
+     */
+    public List<Maintenance> getActiveMaintenance() {
+        return maintenanceRepository.findByStatusInOrderByStartDateAsc(
+                List.of(MaintenanceStatus.IN_PROGRESS, MaintenanceStatus.ON_HOLD)
+        );
+    }
+    
+    public void deleteMaintenanceByTowerId(Long towerId) {
+        maintenanceRepository.deleteByTowerId(towerId);
     }
 }
