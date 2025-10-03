@@ -6,7 +6,7 @@ import com.example.demo.dto.hardware.HardwareSummaryDTO;
 import com.example.demo.service.HardwareService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity; 
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hardware")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class HardwareController {
 
     private final HardwareService hardwareService;

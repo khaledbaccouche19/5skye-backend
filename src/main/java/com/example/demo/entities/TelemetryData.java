@@ -19,7 +19,7 @@ public class TelemetryData {
     @Column(name = "telemetry_id")
     private Long id;
 
-    @Column(name = "timestamp", nullable = false)
+    @Column(name = "time", nullable = false)
     private Instant timestamp;
 
     // Core Tower Status

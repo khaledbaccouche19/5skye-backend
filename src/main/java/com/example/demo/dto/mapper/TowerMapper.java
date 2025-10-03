@@ -18,6 +18,13 @@ public class TowerMapper {
             return null;
         }
 
+        // Debug logging
+        System.out.println("TowerMapper.toDTO - SiteBoss fields:");
+        System.out.println("  sitebossEnabled: " + tower.getSitebossEnabled());
+        System.out.println("  sitebossHost: " + tower.getSitebossHost());
+        System.out.println("  sitebossUsername: " + tower.getSitebossUsername());
+        System.out.println("  sitebossPassword: " + tower.getSitebossPassword());
+
         return TowerDTO.builder()
                 .id(tower.getId())
                 .name(tower.getName())
@@ -35,6 +42,11 @@ public class TowerMapper {
                 .model3dPath(tower.getModel3dPath())
                 .apiEndpointUrl(tower.getApiEndpointUrl())
                 .apiKey(tower.getApiKey())
+                .refreshIntervalMs(tower.getRefreshIntervalMs())
+                .sitebossEnabled(tower.getSitebossEnabled())
+                .sitebossHost(tower.getSitebossHost())
+                .sitebossUsername(tower.getSitebossUsername())
+                .sitebossPassword(tower.getSitebossPassword())
                 .createdAt(tower.getCreatedAt())
                 .updatedAt(tower.getUpdatedAt())
                 .build();
@@ -61,6 +73,11 @@ public class TowerMapper {
                 .model3dPath(createTowerDTO.getModel3dPath())
                 .apiEndpointUrl(createTowerDTO.getApiEndpointUrl())
                 .apiKey(createTowerDTO.getApiKey())
+                .refreshIntervalMs(createTowerDTO.getRefreshIntervalMs())
+                .sitebossEnabled(createTowerDTO.getSitebossEnabled())
+                .sitebossHost(createTowerDTO.getSitebossHost())
+                .sitebossUsername(createTowerDTO.getSitebossUsername())
+                .sitebossPassword(createTowerDTO.getSitebossPassword())
                 .build();
     }
 

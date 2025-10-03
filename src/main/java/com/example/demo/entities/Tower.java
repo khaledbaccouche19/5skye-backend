@@ -93,6 +93,26 @@ public class Tower {
     @Column(name = "api_key")
     private String apiKey; // API key for authentication
 
+    // Preferred live refresh interval in milliseconds
+    @Column(name = "refresh_interval_ms")
+    private Integer refreshIntervalMs;
+
+    // SiteBoss Integration fields
+    @Column(name = "siteboss_enabled")
+    private Boolean sitebossEnabled = false;
+
+    @Size(max = 255, message = "SiteBoss host cannot exceed 255 characters")
+    @Column(name = "siteboss_host")
+    private String sitebossHost;
+
+    @Size(max = 100, message = "SiteBoss username cannot exceed 100 characters")
+    @Column(name = "siteboss_username")
+    private String sitebossUsername;
+
+    @Size(max = 100, message = "SiteBoss password cannot exceed 100 characters")
+    @Column(name = "siteboss_password")
+    private String sitebossPassword;
+
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 

@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/telemetry")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class TelemetryDataController {
 
     private final TelemetryDataService telemetryDataService;

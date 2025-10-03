@@ -6,7 +6,7 @@ import com.example.demo.dto.maintenance.UpdateMaintenanceStatusDTO;
 import com.example.demo.entities.Maintenance;
 import com.example.demo.entities.MaintenanceStatus;
 import com.example.demo.entities.Tower;
-import com.example.demo.repository.MaintenanceRepository;
+import com.example.demo.repositories.MaintenanceRepository;
 import com.example.demo.repositories.TowerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

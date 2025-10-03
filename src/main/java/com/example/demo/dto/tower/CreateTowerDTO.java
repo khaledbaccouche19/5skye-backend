@@ -62,4 +62,21 @@ public class CreateTowerDTO {
     
     @Size(max = 200, message = "API key cannot exceed 200 characters")
     private String apiKey; // Optional API key for authentication
+    
+    // Preferred live refresh interval in milliseconds (optional)
+    @Min(value = 500, message = "Refresh interval must be at least 500 ms")
+    @Max(value = 600000, message = "Refresh interval must be <= 600000 ms")
+    private Integer refreshIntervalMs;
+
+    // SiteBoss Integration fields (optional)
+    private Boolean sitebossEnabled;
+    
+    @Size(max = 255, message = "SiteBoss host cannot exceed 255 characters")
+    private String sitebossHost;
+    
+    @Size(max = 100, message = "SiteBoss username cannot exceed 100 characters")
+    private String sitebossUsername;
+    
+    @Size(max = 100, message = "SiteBoss password cannot exceed 100 characters")
+    private String sitebossPassword;
 } 

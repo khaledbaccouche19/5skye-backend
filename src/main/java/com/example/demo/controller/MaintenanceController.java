@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/maintenance")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class MaintenanceController {
 
     private final MaintenanceService maintenanceService;

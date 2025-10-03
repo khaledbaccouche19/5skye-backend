@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/thresholds")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class ThresholdRuleController {
 
     private final ThresholdRuleService thresholdRuleService;

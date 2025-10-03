@@ -4,6 +4,21 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Build artifacts
+*.jar
+*.war
+*.ear
+*.class
+
+# Test files
+test.txt
+test-*.glb
+test-*.obj
+test-*.fbx
+
+# Uploaded files (should be managed separately)
+uploads/
+
 ### STS ###
 .apt_generated
 .classpath

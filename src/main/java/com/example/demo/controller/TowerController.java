@@ -185,4 +185,14 @@ public class TowerController {
         
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{id}/telemetry/live")
+    public ResponseEntity<Object> getTowerTelemetry(@PathVariable Long id) {
+        try {
+            return towerService.getTowerTelemetry(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to fetch telemetry data: " + e.getMessage()));
+        }
+    }
 }

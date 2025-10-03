@@ -13,6 +13,9 @@ public class FileUploadConfig implements WebMvcConfigurer {
     @Value("${app.upload.path:uploads/models}")
     private String uploadPath;
 
+    @Value("${app.cors.allowed-origins:*}")
+    private String allowedOriginsRaw;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Get absolute path for uploads directory
@@ -27,8 +30,22 @@ public class FileUploadConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        String[] origins = (allowedOriginsRaw == null || allowedOriginsRaw.isBlank())
+                ? new String[]{"*"}
+                : java.util.Arrays.stream(allowedOriginsRaw.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toArray(String[]::new);
+
+        registry.addMapping("/api/**")
+                .allowedOrigins(origins)
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .exposedHeaders("Content-Length", "Content-Type")
+                .maxAge(3600);
+
         registry.addMapping("/models/**")
-                .allowedOrigins("*")
+                .allowedOrigins(origins)
                 .allowedMethods("GET", "HEAD", "OPTIONS")
                 .allowedHeaders("*")
                 .exposedHeaders("Content-Length", "Content-Type", "Accept-Ranges", "Last-Modified")

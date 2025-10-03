@@ -24,6 +24,14 @@ public class TowerDTO {
     private String model3dPath; // 3D model path for the tower
     private String apiEndpointUrl; // External API endpoint for telemetry data
     private String apiKey; // API key for authentication
+    private Integer refreshIntervalMs; // preferred live refresh interval
+    
+    // SiteBoss Integration fields
+    private Boolean sitebossEnabled;
+    private String sitebossHost;
+    private String sitebossUsername;
+    private String sitebossPassword;
+    
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 }

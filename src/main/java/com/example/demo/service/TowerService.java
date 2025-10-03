@@ -7,10 +7,17 @@ import com.example.demo.dto.mapper.TowerMapper;
 import com.example.demo.entities.Tower;
 import com.example.demo.entities.TowerStatus;
 import com.example.demo.repositories.TowerRepository;
+import com.example.demo.repositories.TelemetryDataRepository;
+import com.example.demo.repositories.MaintenanceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +26,8 @@ public class TowerService {
 
     private final TowerRepository towerRepository;
     private final TowerMapper towerMapper;
+    private final TelemetryDataRepository telemetryDataRepository;
+    private final MaintenanceRepository maintenanceRepository;
 
     public List<TowerDTO> getAllTowers() {
         return towerRepository.findAll().stream()
@@ -100,6 +109,28 @@ public class TowerService {
         if (updateTowerDTO.getApiKey() != null) {
             existingTower.setApiKey(updateTowerDTO.getApiKey());
         }
+        // SiteBoss integration fields
+        if (updateTowerDTO.getSitebossEnabled() != null) {
+            existingTower.setSitebossEnabled(updateTowerDTO.getSitebossEnabled());
+            if (Boolean.FALSE.equals(updateTowerDTO.getSitebossEnabled())) {
+                // Clear credentials when disabled
+                existingTower.setSitebossHost(null);
+                existingTower.setSitebossUsername(null);
+                existingTower.setSitebossPassword(null);
+            }
+        }
+        if (updateTowerDTO.getSitebossHost() != null) {
+            existingTower.setSitebossHost(updateTowerDTO.getSitebossHost());
+        }
+        if (updateTowerDTO.getSitebossUsername() != null) {
+            existingTower.setSitebossUsername(updateTowerDTO.getSitebossUsername());
+        }
+        if (updateTowerDTO.getSitebossPassword() != null) {
+            existingTower.setSitebossPassword(updateTowerDTO.getSitebossPassword());
+        }
+        if (updateTowerDTO.getRefreshIntervalMs() != null) {
+            existingTower.setRefreshIntervalMs(updateTowerDTO.getRefreshIntervalMs());
+        }
         
         // Validate the final entity before saving
         validateTowerEntity(existingTower);
@@ -119,33 +150,21 @@ public class TowerService {
         }
     }
 
+    @Transactional
     public void deleteTower(Long id) {
-        // Load tower with all relationships using separate queries
+        // Ensure tower exists
         Tower tower = towerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tower not found with id: " + id));
-        
-        // Load relationships separately to avoid MultipleBagFetchException
-        Tower towerWithHardware = towerRepository.findByIdWithHardware(id).orElse(tower);
-        Tower towerWithAlerts = towerRepository.findByIdWithAlerts(id).orElse(tower);
-        Tower towerWithThresholdRules = towerRepository.findByIdWithThresholdRules(id).orElse(tower);
-        Tower towerWithTelemetryData = towerRepository.findByIdWithTelemetryData(id).orElse(tower);
-        
-        // Combine all relationships
-        tower.setHardware(towerWithHardware.getHardware());
-        tower.setAlerts(towerWithAlerts.getAlerts());
-        tower.setThresholdRules(towerWithThresholdRules.getThresholdRules());
-        tower.setTelemetryData(towerWithTelemetryData.getTelemetryData());
-        
-        // Clear all relationships to ensure proper cascade deletion
-        tower.getHardware().clear();
-        tower.getAlerts().clear();
-        tower.getThresholdRules().clear();
-        tower.getTelemetryData().clear();
-        
+
+        // Delete dependent rows not covered by orphanRemoval
+        maintenanceRepository.deleteByTowerId(id);
+        telemetryDataRepository.deleteByTowerId(id);
+
         // Clean up 3D model file if it exists
         cleanupModelFile(tower.getModel3dPath());
-        
-        towerRepository.delete(tower);
+
+        // Delete tower by id to avoid transient relationship issues
+        towerRepository.deleteById(id);
     }
 
     public boolean canDeleteTower(Long id) {
@@ -445,5 +464,79 @@ public class TowerService {
         }
         
         throw new RuntimeException("Tower with ID " + id + " has valid coordinates and cannot be deleted");
+    }
+
+    public ResponseEntity<Object> getTowerTelemetry(Long id) {
+        Tower tower = towerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tower not found with id: " + id));
+        
+        // Check if tower has API endpoint configured
+        if (tower.getApiEndpointUrl() == null || tower.getApiEndpointUrl().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "No API endpoint configured for this tower"));
+        }
+        
+        try {
+            // Create RestTemplate for making HTTP requests
+            RestTemplate restTemplate = new RestTemplate();
+            
+            // Prepare headers
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.set("Content-Type", "application/json");
+            
+            // Add API key if available
+            if (tower.getApiKey() != null && !tower.getApiKey().isEmpty()) {
+                headers.set("Authorization", "Bearer " + tower.getApiKey());
+            }
+            
+            // Create HTTP entity with headers
+            org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(headers);
+            
+            // Make request to the simulator
+            ResponseEntity<Object> response = restTemplate.exchange(
+                    tower.getApiEndpointUrl(),
+                    org.springframework.http.HttpMethod.GET,
+                    entity,
+                    Object.class
+            );
+            
+            // Add tower information to the telemetry data
+            Object telemetryData = response.getBody();
+            if (telemetryData instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> telemetryList = (List<Map<String, Object>>) telemetryData;
+                for (Map<String, Object> data : telemetryList) {
+                    // Add tower-specific information
+                    data.put("towerId", tower.getId());
+                    data.put("towerName", tower.getName());
+                    data.put("towerCity", tower.getCity());
+                    data.put("towerRegion", tower.getRegion());
+                    data.put("towerStatus", tower.getStatus().toString());
+                    data.put("towerCoordinates", Map.of(
+                        "latitude", tower.getLatitude(),
+                        "longitude", tower.getLongitude()
+                    ));
+                }
+            } else if (telemetryData instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> data = (Map<String, Object>) telemetryData;
+                // Add tower-specific information
+                data.put("towerId", tower.getId());
+                data.put("towerName", tower.getName());
+                data.put("towerCity", tower.getCity());
+                data.put("towerRegion", tower.getRegion());
+                data.put("towerStatus", tower.getStatus().toString());
+                data.put("towerCoordinates", Map.of(
+                    "latitude", tower.getLatitude(),
+                    "longitude", tower.getLongitude()
+                ));
+            }
+            
+            return ResponseEntity.ok(telemetryData);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to fetch telemetry data from simulator: " + e.getMessage()));
+        }
     }
 }

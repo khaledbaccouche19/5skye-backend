@@ -1,4 +1,4 @@
-package com.example.demo.repository;
+package com.example.demo.repositories;
 
 import com.example.demo.entities.Maintenance;
 import com.example.demo.entities.MaintenanceStatus;
@@ -38,3 +38,5 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> 
     
     void deleteByTowerId(Long towerId);
 }
+
+
