@@ -357,10 +357,6 @@ public class SiteBossService {
                     Map<String, Object> parsed = parseSiteBossDataFromPath(perTowerOutput);
                     try {
                         // Update gauges for dashboard consumption
-                        Object sc = parsed.get("sensorCount");
-                        if (sc instanceof Number) {
-                            meterRegistry.gauge("siteboss_sensor_count", Tags.of("towerId", towerIdStr), ((Number) sc).doubleValue());
-                        }
                         Object data = parsed.get("data");
                         if (data instanceof JsonNode) {
                             JsonNode node = (JsonNode) data;
@@ -408,9 +404,16 @@ public class SiteBossService {
                                         } catch (Exception ignore) {}
                                     }
                                 }
-                                meterRegistry.gauge("siteboss_alert_count", Tags.of("towerId", towerIdStr, "level", "normal"), (double) normalCount);
-                                meterRegistry.gauge("siteboss_alert_count", Tags.of("towerId", towerIdStr, "level", "warning"), (double) warningCount);
-                                meterRegistry.gauge("siteboss_alert_count", Tags.of("towerId", towerIdStr, "level", "critical"), (double) criticalCount);
+                                // Update alert count gauges using direct gauge registration
+                                meterRegistry.gauge("siteboss_alert_count", Tags.of("towerId", towerIdStr, "level", "normal"), normalCount);
+                                meterRegistry.gauge("siteboss_alert_count", Tags.of("towerId", towerIdStr, "level", "warning"), warningCount);
+                                meterRegistry.gauge("siteboss_alert_count", Tags.of("towerId", towerIdStr, "level", "critical"), criticalCount);
+                                
+                                // Also set sensor count from parsed data
+                                Object sc = parsed.get("sensorCount");
+                                if (sc instanceof Number) {
+                                    meterRegistry.gauge("siteboss_sensor_count", Tags.of("towerId", towerIdStr), ((Number) sc).doubleValue());
+                                }
                             }
                         }
                         meterRegistry.gauge("siteboss_last_pull_epoch_seconds", Tags.of("towerId", towerIdStr), (double) Instant.now().getEpochSecond());
