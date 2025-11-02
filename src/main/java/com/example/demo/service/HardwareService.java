@@ -11,6 +11,7 @@ import com.example.demo.repositories.TowerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,5 +91,13 @@ public class HardwareService {
 
     public void deleteHardwareByTowerId(Long towerId) {
         hardwareRepository.deleteByTowerId(towerId);
+    }
+
+    public List<HardwareDTO> searchHardware(Long towerId, String vendor, String serial,
+                                            LocalDate warrantyAfter, LocalDate warrantyBefore) {
+        return hardwareRepository.searchHardware(towerId, vendor, serial, warrantyAfter, warrantyBefore)
+                .stream()
+                .map(hardwareMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }

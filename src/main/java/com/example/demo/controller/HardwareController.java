@@ -5,10 +5,12 @@ import com.example.demo.dto.hardware.HardwareDTO;
 import com.example.demo.dto.hardware.HardwareSummaryDTO;
 import com.example.demo.service.HardwareService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity; 
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -60,5 +62,17 @@ public class HardwareController {
     public ResponseEntity<Void> deleteHardware(@PathVariable Long id) {
         hardwareService.deleteHardware(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<HardwareDTO>> searchHardware(
+            @RequestParam(required = false) Long towerId,
+            @RequestParam(required = false) String vendor,
+            @RequestParam(required = false) String serial,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate warrantyAfter,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate warrantyBefore
+    ) {
+        List<HardwareDTO> results = hardwareService.searchHardware(towerId, vendor, serial, warrantyAfter, warrantyBefore);
+        return ResponseEntity.ok(results);
     }
 }

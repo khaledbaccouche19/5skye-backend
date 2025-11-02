@@ -1,76 +1,82 @@
-# 5Skye Backend
+# 5SKYE Backend (Spring Boot)
 
-A Spring Boot backend service for the 5Skye Digital Twin Platform.
+Spring Boot 3 + Java 17 backend for the 5SKYE Digital Twin Platform.
 
 ## Features
 
-- **Tower Management**: CRUD operations for tower entities
-- **Maintenance Management**: Schedule and track maintenance tasks
-- **3D Model Integration**: Upload and manage 3D tower models
-- **Telemetry Data**: Real-time data collection and processing
-- **AI Analytics**: Anomaly detection and predictive insights
+- Tower management (CRUD, summaries, validation, dependency checks)
+- Hardware inventory (CRUD + server‑side search: vendor, serial, warranty)
+- Maintenance management (CRUD, status filters, overdue queries)
+- 3D model integration (upload path + per‑tower assignment)
+- Telemetry ingest scheduler (live pulls → normalize → persist snapshots)
+- AI utilities (analytics endpoints, anomaly/forecast helpers)
+- Auth (JWT endpoints used by the frontend)
 
-## Quick Start
+## Run
 
-1. **Prerequisites**
-   - Java 17+
-   - Maven 3.6+
+Prerequisites: Java 17+, Maven 3.6+
 
-2. **Run the application**
-   ```bash
-   ./mvnw spring-boot:run
-   ```
+```bash
+./mvnw spring-boot:run
+```
 
-3. **Access the API**
-   - Base URL: `http://localhost:8088`
-   - API Documentation: `http://localhost:8088/api`
+Base URL: `http://localhost:8088`
 
-## API Endpoints
+## Key Endpoints (selection)
 
-### Towers
-- `GET /api/towers` - List all towers
-- `POST /api/towers` - Create new tower
-- `GET /api/towers/{id}` - Get tower by ID
-- `PUT /api/towers/{id}` - Update tower
-- `DELETE /api/towers/{id}` - Delete tower
+Towers
+- `GET /api/towers` — list
+- `GET /api/towers/{id}` — details
+- `POST /api/towers` — create
+- `PUT /api/towers/{id}` — update
+- `DELETE /api/towers/{id}` — delete
+- `PUT /api/towers/{id}/3d-model` — set model path
+- `GET /api/towers/{id}/telemetry/live` — proxy live telemetry for a tower
 
-### Maintenance
-- `GET /api/maintenance` - List all maintenance records
-- `POST /api/maintenance` - Create maintenance record
-- `GET /api/maintenance/{id}` - Get maintenance by ID
-- `PUT /api/maintenance/{id}` - Update maintenance
-- `DELETE /api/maintenance/{id}` - Delete maintenance
+Hardware
+- `GET /api/hardware/tower/{towerId}` — list per tower
+- `GET /api/hardware/search?vendor=&serial=&warrantyAfter=&warrantyBefore=` — search
+- `POST /api/hardware` / `PUT /api/hardware/{id}` / `DELETE /api/hardware/{id}`
 
-### 3D Models
-- `PUT /api/towers/{id}/3d-model` - Upload 3D model
-- `GET /api/towers/{id}/3d-model` - Get 3D model path
+Maintenance
+- `GET /api/maintenance` — list
+- `GET /api/maintenance/tower/{towerId}` — per tower
+- `GET /api/maintenance/status/{status}` — by status
+- CRUD endpoints for create/update/delete
+
+AI (built‑in analytics helpers)
+- `GET /api/ai/towers/{towerId}/anomalies` — z‑score anomalies over a window
+- `GET /api/ai/towers/{towerId}/predictions` — trend/insight helpers
+- `GET /api/ai/towers/{towerId}/forecast/temperature` — demo forecast
+
+Health / Utilities
+- `GET /api/health/connection-test` — simple connectivity test used by the UI
+- Data cleanup + validation endpoints available under `/api/towers/*`
+
+## Telemetry Ingest
+
+`TelemetryIngestScheduler` runs every 30s:
+
+1) Enumerates towers with an `apiEndpointUrl`
+2) Pulls the latest snapshot (simulator or real)
+3) Normalizes → persists to `telemetry_data`
+4) Publishes gauges via Micrometer (Prometheus‑scrapable)
 
 ## Configuration
 
-The application uses `application.properties` for configuration:
-- Database: H2 (in-memory for development)
-- Port: 8088
-- File uploads: `uploads/` directory
+- Port: `8088`
+- DB: H2 for local; PostgreSQL recommended for persistence
+- Uploads: `uploads/` directory for models
+- Security: JWT for auth endpoints (used by the frontend)
 
-## Documentation
+## Build / Test
 
-See the `docs/` directory for detailed documentation:
-- Backend Data Retrieval Guide
-- Frontend Health Check Implementation
-- Tower 3D Model Integration
-- Tower Deletion Solution
-
-## Development
-
-### Building
 ```bash
 ./mvnw clean package
-```
-
-### Testing
-```bash
 ./mvnw test
 ```
 
-### Code Style
-The project follows standard Java conventions and Spring Boot best practices.
+## Notes
+
+- Pair this service with the simulator (`8080`), frontend (`3000`), and observability stack (`9090`/`3001`).
+- See repository root `README.md` and `docs/THESIS_GUIDE.md` for end‑to‑end and thesis guidance.
